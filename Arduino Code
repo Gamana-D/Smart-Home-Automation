@@ -1,0 +1,30 @@
+#include <Servo.h>
+
+Servo doorServo;
+
+const int irSensorPin = 2;      // IR sensor connected to digital pin 2
+const int servoPin = 9;         // Servo connected to digital pin 9
+const int openAngle = 90;       // Angle to open the door
+const int closedAngle = 0;      // Angle to close the door
+const int detectionDelay = 500; // Delay for stability (in ms)
+
+void setup() {
+  pinMode(irSensorPin, INPUT);
+  doorServo.attach(servoPin);
+  doorServo.write(closedAngle); // Start with door closed
+  Serial.begin(9600);
+}
+
+void loop() {
+  int sensorValue = digitalRead(irSensorPin);
+
+  if (sensorValue == LOW) { // IR sensor detects object (usually LOW)
+    Serial.println("Object detected - Opening door");
+    doorServo.write(openAngle);
+    delay(3000); // Keep door open for 3 seconds
+    Serial.println("Closing door");
+    doorServo.write(closedAngle);
+  }
+
+  delay(detectionDelay); // Small delay for debounce
+}
